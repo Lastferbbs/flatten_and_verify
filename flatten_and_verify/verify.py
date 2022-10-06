@@ -65,6 +65,7 @@ def publish_source(
     silent=False,
     blockexplorer_list=explorers,
     api_key=False,
+    blockscout=False,
 ) -> bool:
     """Flatten contract and publish source on the selected explorer"""
 
@@ -162,7 +163,22 @@ def publish_source(
         constructor_arguments = ""
 
     # Submit verification
-    if chain["scan"]:
+    if blockscout:
+        payload_verification: Dict = {
+            "apikey": api_key,
+            "module": "contract",
+            "action": "verifysourcecode",
+            "codeformat": "solidity-standard-json-input",
+            "contractaddress": address,
+            "contractname": f"{flattener.contract_file}:{flattener.contract_name}",
+            "compilerversion": f"v{contract_info['compiler_version']}",
+            "constructorArguements": constructor_arguments,
+            "sourceCode": io.StringIO(json.dumps(flattener.standard_input_json)),
+        }
+
+        headers = BLOCKSCOUT_HEADERS
+
+    else:
         payload_verification: Dict = {
             "apikey": api_key,
             "module": "contract",
@@ -178,21 +194,6 @@ def publish_source(
             "licenseType": license_code,
         }
         headers = REQUEST_HEADERS
-
-    else:
-        payload_verification: Dict = {
-            "apikey": api_key,
-            "module": "contract",
-            "action": "verifysourcecode",
-            "codeformat": "solidity-standard-json-input",
-            "contractaddress": address,
-            "contractname": f"{flattener.contract_file}:{flattener.contract_name}",
-            "compilerversion": f"v{contract_info['compiler_version']}",
-            "constructorArguements": constructor_arguments,
-            "sourceCode": io.StringIO(json.dumps(flattener.standard_input_json)),
-        }
-
-        headers = BLOCKSCOUT_HEADERS
 
     response = requests.post(url, data=payload_verification, headers=headers)
 

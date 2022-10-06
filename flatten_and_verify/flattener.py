@@ -12,6 +12,7 @@ IMPORT_PATTERN = re.compile(
 )
 PRAGMA_PATTERN = re.compile(r"^pragma.*;$", re.MULTILINE)
 LICENSE_PATTERN = re.compile(r"^// SPDX-License-Identifier: (.*)$", re.MULTILINE)
+LICENSE_PATTERN2 = re.compile(r"^//SPDX-License-Identifier: (.*)$", re.MULTILINE)
 
 
 class Flattener:
@@ -36,7 +37,13 @@ class Flattener:
         license_search = LICENSE_PATTERN.search(
             self.sources[Path(primary_source_fp).name]
         )
+        license_search2 = LICENSE_PATTERN2.search(
+            self.sources[Path(primary_source_fp).name]
+        )
+
         self.license = license_search.group(1) if license_search else "NONE"
+        if self.license == "NONE":
+            self.license = license_search2.group(1) if license_search else "NONE"
 
     def traverse(self, fp: str) -> None:
         """Traverse a contract source files dependencies.
