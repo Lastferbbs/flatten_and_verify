@@ -43,7 +43,7 @@ class Flattener:
 
         self.license = license_search.group(1) if license_search else "NONE"
         if self.license == "NONE":
-            self.license = license_search2.group(1) if license_search else "NONE"
+            self.license = license_search2.group(1) if license_search2 else "NONE"
 
     def traverse(self, fp: str) -> None:
         """Traverse a contract source files dependencies.
