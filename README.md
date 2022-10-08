@@ -2,7 +2,7 @@
  Code is a modified brownie built in flattener and verify.
 
 ### It can be used with scan-like website (etherscan, snowtrace) and blockscout explorers.
-
+### Constructor arguments are fetched from explorer, so you don't have to worry about it.
 
 
 # Dependencies
