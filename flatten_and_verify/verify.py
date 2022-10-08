@@ -64,12 +64,11 @@ def publish_source(
     remaps=dict(),
     silent=False,
     blockexplorer_list=explorers,
-    api_key=False,
+    api_key=0,
     blockscout=False,
 ) -> bool:
     """Flatten contract and publish source on the selected explorer"""
 
-    compiler_settings["libraries"] = {_name + ".sol": {}}
     # Check required conditions for verifying
     try:
         if "api" in _url:
@@ -77,7 +76,11 @@ def publish_source(
         else:
             chain = blockexplorer_list[_url]
             url = chain["url"]
-        if not api_key:
+        if chain["scan"] == 0:
+                blockscout = True
+            else:
+                blockscout = False
+        if api_key == 0:
             api_key = chain["api_key"]
 
     except:
